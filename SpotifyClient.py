@@ -76,8 +76,6 @@ class SpotifyClient:
                 "Authorization": f"Bearer {self.client_secret}"
             }
         )
-        response_json = response.json()
-        # print(response_json)
         self.setPlaylist(newPlaylistName, 1)
 
     # SBR = Spotify Based Recommending
@@ -100,9 +98,6 @@ class SpotifyClient:
             for j in response_json['tracks']:
                 playlist_URIs += (j['uri'] + ",")
                 break
-
-            # playlist_URIs += (response_json['tracks']['uri'] + ",")
-            # playlist_URIs.append(response_json['tracks']['items']['track']['uri'])
 
         playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
         url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
