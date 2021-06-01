@@ -80,8 +80,8 @@ class SpotifyClient:
         # print(response_json)
         self.setPlaylist(newPlaylistName, 1)
 
-    # SRS = Spotify Recomendation System
-    def populateNewPlaylist_SRS(self):
+    # SBR = Spotify Based Recommending
+    def populateNewPlaylist_SBR(self):
         playlist_ID = []
         playlist_URIs = ""
         for i in self.userPlaylist.getSongs():
@@ -114,8 +114,8 @@ class SpotifyClient:
             }
         )
 
-    # ABS = Attribute Based System
-    def populateNewPlaylist_ABS(self):
+    # ABR = Attribute Based Recommending
+    def populateNewPlaylist_ABR(self):
         artist_dict = {}
         order_dict = {}
         for i in self.userPlaylist.getSongs():

@@ -45,11 +45,11 @@ def main():
             print("Invalid Input")
     if (generationOptions == 1):
         print("Generating Playlist...")
-        sc.populateNewPlaylist_SRS()
+        sc.populateNewPlaylist_SBR()
         print("Generation Complete")
     elif (generationOptions == 2):
         print("Generating Playlist...")
-        sc.populateNewPlaylist_ABS()
+        sc.populateNewPlaylist_ABR()
         print("Generation Complete")
         pass
 
