@@ -127,7 +127,7 @@ class SpotifyClient:
                     artist_dict[j].append(i)
         print(artist_dict)
         for key, value in artist_dict.items():
-            if (key in order_dict.keys()):
+            if (str(len(value)) in order_dict.keys()):
                 order_dict[str(len(value))].append(key)
             else:
                 order_dict[str(len(value))] = []
