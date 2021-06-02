@@ -21,7 +21,6 @@ class SpotifyClient:
         return self.userPlaylist
 
     def setPlaylist(self, userInput, option=0):
-        # print(option)
         url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
         response = requests.get(
             url,
@@ -113,20 +112,19 @@ class SpotifyClient:
     def populateNewPlaylist_ABR(self):
         artist_dict = {}
         order_dict = {}
+        playlist_URIs = ""
         for i in self.userPlaylist.getSongs():
             if (i.getArtistID() in artist_dict.keys()):
                 artist_dict[i.getArtistID()].append(i)
             else:
                 artist_dict[i.getArtistID()] = []
                 artist_dict[i.getArtistID()].append(i)
-        print(artist_dict)
         for key, value in artist_dict.items():
             if (str(len(value)) in order_dict.keys()):
                 order_dict[str(len(value))].append(key)
             else:
                 order_dict[str(len(value))] = []
                 order_dict[str(len(value))].append(key)
-        print(order_dict)
         song_counter = 1
         for key, value in order_dict.items():
             acousticness = Song_Audio_Features("acousticness")
@@ -190,7 +188,6 @@ class SpotifyClient:
                     url_extension += "min_" + i.getName() + "=" + str(i.getMinValue()) + "&max_" + i.getName() + "=" + str(i.getMaxValue()) + "&"
             url_extension = url_extension[:len(url_extension) - 1]
             url = f"https://api.spotify.com/v1/recommendations?{url_extension}"
-            print(url)
             response = requests.get(
                 url,
                 headers={
@@ -200,7 +197,15 @@ class SpotifyClient:
             )
             response_json = response.json()
             time.sleep(0.50)
-            print(response_json)
-            print()
-            print()
+            for i in response_json['tracks']:
+                playlist_URIs += (i['uri'] + ",")
+        playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
+        url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
+        response = requests.post(
+            url,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.client_secret}"
+            }
+        )
 
