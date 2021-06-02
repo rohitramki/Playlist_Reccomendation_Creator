@@ -22,14 +22,12 @@ class Song:
         self.valence = None
         self.tempo = None
         self.genre = None
-        self.generateAudioAnalysis()
-        self.generateGenre()
 
     def __str__(self):
-        return self.name + " " + str(self.song_id)
+        return self.name + " - " + self.artist
 
     def __repr__(self):
-        return self.name + " " + str(self.song_id)
+        return self.name + " - " + self.artist
 
     def getAcousticness(self):
         return self.acousticness
@@ -117,14 +115,3 @@ class Song:
         time.sleep(0.3)
         response_json = response.json()
         self.genre = response_json['genres']
-
-
-
-
-
-
-
-
-
-
-
