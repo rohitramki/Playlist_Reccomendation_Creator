@@ -119,12 +119,11 @@ class SpotifyClient:
         artist_dict = {}
         order_dict = {}
         for i in self.userPlaylist.getSongs():
-            for j in i.getArtistID():
-                if (j in artist_dict.keys()):
-                    artist_dict[j].append(i)
-                else:
-                    artist_dict[j] = []
-                    artist_dict[j].append(i)
+            if (i.getArtistID() in artist_dict.keys()):
+                artist_dict[i.getArtistID()].append(i)
+            else:
+                artist_dict[i.getArtistID()] = []
+                artist_dict[i.getArtistID()].append(i)
         print(artist_dict)
         for key, value in artist_dict.items():
             if (str(len(value)) in order_dict.keys()):
@@ -133,57 +132,8 @@ class SpotifyClient:
                 order_dict[str(len(value))] = []
                 order_dict[str(len(value))].append(key)
         print(order_dict)
-        # genre_dict = {}
-        # for i in self.userPlaylist.getSongs():
-        #     for j in i.getGenre():
-        #         if (len(j) != 0):
-        #             if j in genre_dict.keys():
-        #                 genre_dict[j].append(i)
-        #             else:
-        #                 genre_dict[j] = []
-        #                 genre_dict[j].append(i)
-        # print(genre_dict)
-        # first_highest = [-1, "", []]
-        # second_highest = [-1, "", []]
-        # third_highest = [-1, "", []]
-        # for key, value in genre_dict.items():
-        #     print(first_highest[0])
-        #     print(first_highest[1])
-        #     print(second_highest[0])
-        #     print(second_highest[1])
-        #     print(third_highest[0])
-        #     print(third_highest[1])
-        #     if (first_highest[0] < len(value)):
-        #         third_highest[0] = second_highest[0]
-        #         third_highest[1] = second_highest[1]
-        #         third_highest[2] = second_highest[2]
-        #         second_highest[0] = first_highest[0]
-        #         second_highest[1] = first_highest[1]
-        #         second_highest[2] = first_highest[2]
-        #         first_highest[0] = len(value)
-        #         first_highest[1] = key.replace(' ', '-')
-        #         first_highest[2] = value
-        #     elif (second_highest[0] < len(value)):
-        #         print("second")
-        #         third_highest[0] = second_highest[0]
-        #         third_highest[1] = second_highest[1]
-        #         third_highest[2] = second_highest[2]
-        #         second_highest[0] = len(value)
-        #         second_highest[1] = key.replace(' ', '-')
-        #         second_highest[2] = value
-        #     elif (third_highest[0] < len(value)):
-        #         print("third")
-        #         third_highest[0] = len(value)
-        #         third_highest[1] = key.replace(' ', '-')
-        #         third_highest[2] = value
-        # genre_dict.clear()
-        # genre_dict = {
-        #     first_highest[1]: first_highest[2],
-        #     second_highest[1]: second_highest[2],
-        #     third_highest[1]: third_highest[2]
-        # }
-        counter = 1
-        for key, value in artist_dict.items():
+        song_counter = 1
+        for key, value in order_dict.items():
             acousticness = Song_Audio_Features("acousticness")
             danceability = Song_Audio_Features("danceability")
             energy = Song_Audio_Features("energy")
@@ -191,55 +141,61 @@ class SpotifyClient:
             liveness = Song_Audio_Features("liveness")
             speechiness = Song_Audio_Features("speechiness")
             valence = Song_Audio_Features("valence")
+            song_total = 0
             for i in value:
-                acousticness.setMean(acousticness.getMean() + i.getAcousticness())
-                danceability.setMean(danceability.getMean() + i.getDanceability())
-                energy.setMean(energy.getMean() + i.getEnergy())
-                instrumentalness.setMean(instrumentalness.getMean() + i.getInstrumentalness())
-                liveness.setMean(liveness.getMean() + i.getLiveness())
-                speechiness.setMean(speechiness.getMean() + i.getSpeechiness())
-                valence.setMean(valence.getMean() + i.getValence())
-            acousticness.setMean(acousticness.getMean() / len(value))
-            danceability.setMean(danceability.getMean() / len(value))
-            energy.setMean(energy.getMean() / len(value))
-            instrumentalness.setMean(instrumentalness.getMean() / len(value))
-            liveness.setMean(liveness.getMean() / len(value))
-            speechiness.setMean(speechiness.getMean() / len(value))
-            valence.setMean(valence.getMean() / len(value))
+                for j in artist_dict.get(i):
+                    acousticness.setMean(acousticness.getMean() + j.getAcousticness())
+                    danceability.setMean(danceability.getMean() + j.getDanceability())
+                    energy.setMean(energy.getMean() + j.getEnergy())
+                    instrumentalness.setMean(instrumentalness.getMean() + j.getInstrumentalness())
+                    liveness.setMean(liveness.getMean() + j.getLiveness())
+                    speechiness.setMean(speechiness.getMean() + j.getSpeechiness())
+                    valence.setMean(valence.getMean() + j.getValence())
+                    song_total += 1
+            acousticness.setMean(acousticness.getMean() / song_total)
+            danceability.setMean(danceability.getMean() / song_total)
+            energy.setMean(energy.getMean() / song_total)
+            instrumentalness.setMean(instrumentalness.getMean() / song_total)
+            liveness.setMean(liveness.getMean() / song_total)
+            speechiness.setMean(speechiness.getMean() / song_total)
+            valence.setMean(valence.getMean() / song_total)
+            song_total = 0
             for i in value:
-                acousticness.setVariance(acousticness.getVariance() + ((i.getAcousticness() - acousticness.getMean()) ** 2))
-                danceability.setVariance(danceability.getVariance() + ((i.getDanceability() - danceability.getMean()) ** 2))
-                energy.setVariance(energy.getVariance() + ((i.getEnergy() - energy.getMean()) ** 2))
-                instrumentalness.setVariance(instrumentalness.getVariance() + ((i.getInstrumentalness() - instrumentalness.getMean()) ** 2))
-                liveness.setVariance(liveness.getVariance() + ((i.getLiveness() - liveness.getMean()) ** 2))
-                speechiness.setVariance(speechiness.getVariance() + ((i.getSpeechiness() - speechiness.getMean()) ** 2))
-                valence.setVariance(valence.getVariance() + ((i.getValence() - valence.getMean()) ** 2))
-            acousticness.setVariance(acousticness.getVariance() / (len(value) - 1))
-            danceability.setVariance(danceability.getVariance() / (len(value) - 1))
-            energy.setVariance(energy.getVariance() / (len(value) - 1))
-            instrumentalness.setVariance(instrumentalness.getVariance() / (len(value) - 1))
-            liveness.setVariance(liveness.getVariance() / (len(value) - 1))
-            speechiness.setVariance(speechiness.getVariance() / (len(value) - 1))
-            valence.setVariance(valence.getVariance() / (len(value) - 1))
+                for j in artist_dict.get(i):
+                    acousticness.setVariance(acousticness.getVariance() + ((j.getAcousticness() - acousticness.getMean()) ** 2))
+                    danceability.setVariance(danceability.getVariance() + ((j.getDanceability() - danceability.getMean()) ** 2))
+                    energy.setVariance(energy.getVariance() + ((j.getEnergy() - energy.getMean()) ** 2))
+                    instrumentalness.setVariance(instrumentalness.getVariance() + ((j.getInstrumentalness() - instrumentalness.getMean()) ** 2))
+                    liveness.setVariance(liveness.getVariance() + ((j.getLiveness() - liveness.getMean()) ** 2))
+                    speechiness.setVariance(speechiness.getVariance() + ((j.getSpeechiness() - speechiness.getMean()) ** 2))
+                    valence.setVariance(valence.getVariance() + ((j.getValence() - valence.getMean()) ** 2))
+                    song_total += 1
+            acousticness.setVariance(acousticness.getVariance() / (song_total - 1))
+            danceability.setVariance(danceability.getVariance() / (song_total - 1))
+            energy.setVariance(energy.getVariance() / (song_total - 1))
+            instrumentalness.setVariance(instrumentalness.getVariance() / (song_total - 1))
+            liveness.setVariance(liveness.getVariance() / (song_total - 1))
+            speechiness.setVariance(speechiness.getVariance() / (song_total - 1))
+            valence.setVariance(valence.getVariance() / (song_total - 1))
 
             variance_List = [acousticness, danceability, energy, instrumentalness, liveness, speechiness, valence]
-            url_extension = ""
-            # if counter == 1:
-            #     limit = round((first_highest[0] / (first_highest[0] + second_highest[0] + third_highest[0])) * 10)
-            #     url_extension = f"limit={limit}&seed_genres={first_highest[1]}&"
-            # elif counter == 2:
-            #     limit = round((second_highest[0] / (first_highest[0] + second_highest[0] + third_highest[0])) * 10)
-            #     url_extension = f"limit={limit}&seed_genres={second_highest[1]}&"
-            # elif counter == 3:
-            #     limit = len(self.userPlaylist.getSongs()) - (round((first_highest[0] / (first_highest[0] + second_highest[0] + third_highest[0])) * 10) + round((second_highest[0] / (first_highest[0] + second_highest[0] + third_highest[0])) * 10))
-            #     url_extension = f"limit={limit}&seed_genres={third_highest[1]}&"
-            # for i in variance_List:
-            #     if (i.getVariance() < 0.04):
-            #         url_extension += "target_" + i.getName() + "=" + str(i.getMean()) + "&"
-            #     else:
-            #         url_extension += "min_" + i.getName() + "=" + str(i.getMinValue()) + "&max_" + i.getName() + "=" + str(i.getMaxValue()) + "&"
-            # url_extension = url_extension[:len(url_extension) - 1]
+            limit = int(key) * len(value)
+            song_counter += limit
+            url_extension = f"limit={limit}&seed_artists="
+            artist_ID_Concatenation = ""
+            for i in value:
+                url_extension += str(i) + ","
+            url_extension = url_extension[:len(artist_ID_Concatenation) - 1]
+            url_extension += "&"
+
+            for i in variance_List:
+                if (i.getVariance() < 0.04):
+                    url_extension += "target_" + i.getName() + "=" + str(i.getMean()) + "&"
+                else:
+                    url_extension += "min_" + i.getName() + "=" + str(i.getMinValue()) + "&max_" + i.getName() + "=" + str(i.getMaxValue()) + "&"
+            url_extension = url_extension[:len(url_extension) - 1]
             url = f"https://api.spotify.com/v1/recommendations?{url_extension}"
+            print(url)
             response = requests.get(
                 url,
                 headers={
@@ -252,5 +208,4 @@ class SpotifyClient:
             print(response_json)
             print()
             print()
-            counter += 1
 
