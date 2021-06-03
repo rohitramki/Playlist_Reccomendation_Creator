@@ -4,7 +4,7 @@ import time
 from SpotifyClient import SpotifyClient
 
 client_id = "pjp1yehfstdvh1uu0ni3m9sak"
-client_secret = "BQBDAALoN7iccCT04fXKI9mvvWstieofFf6nPGEd6V7_2VMtAGjp-Yhf7JPd1NwUvT1C4JN04LB9L6gI1OXcBJiog3x1V3xGPdXUFxv_IfM5D31EZfaIKquGLOCBSwXQ27G0WPdsRFq8IKe7JvDLisOmbr_HcyVwFlKlIEbpepvOr89-LHoIql6OmMYeF-ieVEng37F-_cMYKEwbP2E2Jj2oBSfzKKTCaye3XYC8PGEnzirxZA"
+client_secret = "BQBOzIb3kqanF97W-OLbwgt0mTYmiOmrS2F5qdKTL7fM_BURPEjt2zAYAyPzR3hoe2oOgGmDANV_Qm_e6f5sycgtfF_5v41BCimp_yaZQZ6uZUZgbUvDrTGBr26mKJgtmi8xdAdK1mbTU9xQwV3QK8qaBRe2zkmvYQqJ_9dtjXDy6yQCIiWYytpoFwoKY9xcqpw1Lm0WZhvz7mYGJYbbBVuvtsozLyR-7cCYKUwAMAQOCeONLQ"
 
 playlist_id = "2muKAmURcXAGdYLZBoVz7p"
 
@@ -45,13 +45,11 @@ def main():
         if (generationOptions != 1) and (generationOptions != 2):
             print("Invalid Input")
     if (generationOptions == 1):
-        print("Generating Playlist...")
         sc.populateNewPlaylist_SBR()
-        print("Generation Complete")
+        print("'" + sc.getNewUserPlaylist().getName() + "' has successfully been generated!")
     elif (generationOptions == 2):
-        print("Generating Playlist...")
         sc.populateNewPlaylist_ABR()
-        print("Generation Complete")
+        print("'" + sc.getNewUserPlaylist().getName() + "' has successfully been generated!")
         pass
 
     #except:

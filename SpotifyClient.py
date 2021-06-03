@@ -4,7 +4,7 @@ import time
 from Song import Song
 from Playlist import Playlist
 from Song_Audio_Features import Song_Audio_Features
-
+from tqdm import tqdm
 
 class SpotifyClient:
     def __init__(self, client_secret, name, user_id):
@@ -17,8 +17,11 @@ class SpotifyClient:
     def getUserName(self):
         return self.name
 
-    def getuserPlayList(self):
+    def getUserPlayList(self):
         return self.userPlaylist
+
+    def getNewUserPlaylist(self):
+        return self.userNewPlaylist
 
     def setPlaylist(self, userInput, option=0):
         url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
@@ -97,10 +100,9 @@ class SpotifyClient:
             for j in response_json['tracks']:
                 playlist_URIs += (j['uri'] + ",")
                 break
-
-            # playlist_URIs += (response_json['tracks']['uri'] + ",")
-            # playlist_URIs.append(response_json['tracks']['items']['track']['uri'])
-
+        #for i in tqdm(range(0, 100), total=,
+        for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
+            time.sleep(0.2)
         playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
         url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
         response = requests.post(
@@ -202,6 +204,8 @@ class SpotifyClient:
             time.sleep(0.50)
             for i in response_json['tracks']:
                 playlist_URIs += (i['uri'] + ",")
+        for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
+            time.sleep(0.2)
         playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
         url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
         response = requests.post(
