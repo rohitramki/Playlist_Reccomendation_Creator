@@ -2,6 +2,7 @@ import json
 import requests
 import time
 from SpotifyClient import SpotifyClient
+
 client_id = "pjp1yehfstdvh1uu0ni3m9sak"
 client_secret = "BQBDAALoN7iccCT04fXKI9mvvWstieofFf6nPGEd6V7_2VMtAGjp-Yhf7JPd1NwUvT1C4JN04LB9L6gI1OXcBJiog3x1V3xGPdXUFxv_IfM5D31EZfaIKquGLOCBSwXQ27G0WPdsRFq8IKe7JvDLisOmbr_HcyVwFlKlIEbpepvOr89-LHoIql6OmMYeF-ieVEng37F-_cMYKEwbP2E2Jj2oBSfzKKTCaye3XYC8PGEnzirxZA"
 
