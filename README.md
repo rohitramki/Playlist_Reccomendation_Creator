@@ -3,10 +3,10 @@
 Takes a user's Spotify playlist and generates a new playlist based on recommended songs. 
 
 ## Languages
-Python
+* Python
 
 ## Libraries
-json
-requests
-tqdm
-time
+* json
+* requests
+* tqdm
+* time
