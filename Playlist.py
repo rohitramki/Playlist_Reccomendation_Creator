@@ -11,7 +11,7 @@ class Playlist:
         self.songs = []
 
     def getName(self):
-        return name
+        return self.name
 
     def getSongs(self):
         return self.songs
