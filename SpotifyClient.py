@@ -107,6 +107,7 @@ class SpotifyClient:
             for j in response_json['tracks']:
                 playlist_URIs += (j['uri'] + ",")
                 break
+
         #for i in tqdm(range(0, 100), total=,
         for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
             time.sleep(0.2)
