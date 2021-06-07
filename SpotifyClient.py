@@ -4,7 +4,7 @@ import time
 from Song import Song
 from Playlist import Playlist
 from Song_Audio_Features import Song_Audio_Features
-
+from tqdm import tqdm
 
 class SpotifyClient:
     def __init__(self, client_secret, name, user_id):
@@ -17,8 +17,11 @@ class SpotifyClient:
     def getUserName(self):
         return self.name
 
-    def getuserPlayList(self):
+    def getUserPlayList(self):
         return self.userPlaylist
+
+    def getNewUserPlaylist(self):
+        return self.userNewPlaylist
 
     def setPlaylist(self, userInput, option=0):
         url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
@@ -83,8 +86,13 @@ class SpotifyClient:
         playlist_URIs = ""
         for i in self.userPlaylist.getSongs():
             playlist_ID.append(i.getSongID())
+            print(i)
+        print()
+        print()
         for i in playlist_ID:
             url = f"https://api.spotify.com/v1/recommendations?seed_tracks={i}"
+            print(url)
+            print()
             response = requests.get(
                 url,
                 headers={
@@ -94,10 +102,15 @@ class SpotifyClient:
             )
             response_json = response.json()
             time.sleep(0.2)
+            print(response_json)
+            print()
             for j in response_json['tracks']:
                 playlist_URIs += (j['uri'] + ",")
                 break
 
+        #for i in tqdm(range(0, 100), total=,
+        for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
+            time.sleep(0.2)
         playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
         url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
         response = requests.post(
@@ -112,7 +125,7 @@ class SpotifyClient:
     def populateNewPlaylist_ABR(self):
         artist_dict = {}
         order_dict = {}
-        playlist_URIs = ""
+        playlist_URI = ""
         for i in self.userPlaylist.getSongs():
             if (i.getArtistID() in artist_dict.keys()):
                 artist_dict[i.getArtistID()].append(i)
@@ -125,7 +138,6 @@ class SpotifyClient:
             else:
                 order_dict[str(len(value))] = []
                 order_dict[str(len(value))].append(key)
-        song_counter = 1
         for key, value in order_dict.items():
             acousticness = Song_Audio_Features("acousticness")
             danceability = Song_Audio_Features("danceability")
@@ -172,40 +184,71 @@ class SpotifyClient:
             valence.setVariance(valence.getVariance() / (song_total - 1))
 
             variance_List = [acousticness, danceability, energy, instrumentalness, liveness, speechiness, valence]
-            limit = int(key) * len(value)
-            song_counter += limit
-            url_extension = f"limit={limit}&seed_artists="
-            artist_ID_Concatenation = ""
-            for i in value:
-                url_extension += str(i) + ","
-            url_extension = url_extension[:len(artist_ID_Concatenation) - 1]
-            url_extension += "&"
 
+            artist_url_extension = ""
+            artist_extension_list = []
+            counter = 0
+            for i in value:
+                if counter == 5:
+                    artist_url_extension = artist_url_extension[:len(artist_url_extension) - 1]
+                    artist_url_extension += "&"
+                    artist_extension_list.append(artist_url_extension)
+                    counter = 0
+                    artist_url_extension = ""
+                else:
+                    artist_url_extension += str(i) + ","
+                    counter += 1
+            if counter != 0:
+                artist_extension_list.append(artist_url_extension)
+            artist_extension_list[-1] = artist_extension_list[-1][:len(artist_extension_list[-1]) - 1]
+            artist_extension_list[-1] += "&"
+
+            attribute_url_extension = ""
             for i in variance_List:
                 if (i.getVariance() < 0.04):
-                    url_extension += "target_" + i.getName() + "=" + str(i.getMean()) + "&"
+                    attribute_url_extension += "target_" + i.getName() + "=" + str(i.getMean()) + "&"
                 else:
-                    url_extension += "min_" + i.getName() + "=" + str(i.getMinValue()) + "&max_" + i.getName() + "=" + str(i.getMaxValue()) + "&"
-            url_extension = url_extension[:len(url_extension) - 1]
-            url = f"https://api.spotify.com/v1/recommendations?{url_extension}"
-            response = requests.get(
+                    attribute_url_extension += "min_" + i.getName() + "=" + str(i.getMinValue()) + "&max_" + i.getName() + "=" + str(i.getMaxValue()) + "&"
+            attribute_url_extension = attribute_url_extension[:len(attribute_url_extension) - 1]
+
+            limit = int(key) * len(value)
+            limit_counter = 0
+            for i in artist_extension_list:
+                print(i)
+                if i == artist_extension_list[-1]:
+                    current_limit = limit - limit_counter
+                else:
+                    current_limit = int(limit/len(artist_extension_list))
+                    limit_counter += current_limit
+                    if current_limit == 0:
+                        current_limit = limit
+                url_extension = f"limit={current_limit}&seed_artists="
+                url_extension += i + attribute_url_extension
+                url = f"https://api.spotify.com/v1/recommendations?{url_extension}"
+                print(current_limit)
+                print(url)
+                response = requests.get(
+                    url,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.client_secret}"
+                    }
+                )
+                response_json = response.json()
+                #print(response_json)
+                time.sleep(0.5)
+                for i in response_json['tracks']:
+                    playlist_URI += (i['uri'] + ",")
+                url_extension = f"limit={limit}&seed_artists="
+
+            playlist_URI = playlist_URI[:len(playlist_URI) - 1]
+            url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URI}"
+            response = requests.post(
                 url,
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {self.client_secret}"
                 }
             )
-            response_json = response.json()
-            time.sleep(0.50)
-            for i in response_json['tracks']:
-                playlist_URIs += (i['uri'] + ",")
-        playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
-        url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
-        response = requests.post(
-            url,
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.client_secret}"
-            }
-        )
-
+        for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
+            time.sleep(0.2)

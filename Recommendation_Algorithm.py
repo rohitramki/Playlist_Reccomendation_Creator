@@ -2,6 +2,7 @@ import json
 import requests
 import time
 from SpotifyClient import SpotifyClient
+
 from tqdm import tqdm
 client_secret = "BQBDAALoN7iccCT04fXKI9mvvWstieofFf6nPGEd6V7_2VMtAGjp-Yhf7JPd1NwUvT1C4JN04LB9L6gI1OXcBJiog3x1V3xGPdXUFxv_IfM5D31EZfaIKquGLOCBSwXQ27G0WPdsRFq8IKe7JvDLisOmbr_HcyVwFlKlIEbpepvOr89-LHoIql6OmMYeF-ieVEng37F-_cMYKEwbP2E2Jj2oBSfzKKTCaye3XYC8PGEnzirxZA"
 
@@ -42,13 +43,11 @@ def main():
         if (generationOptions != 1) and (generationOptions != 2):
             print("Invalid Input")
     if (generationOptions == 1):
-        print("Generating Playlist...")
         sc.populateNewPlaylist_SBR()
-        print("Generation Complete")
+        print("'" + sc.getNewUserPlaylist().getName() + "' has successfully been generated!")
     elif (generationOptions == 2):
-        print("Generating Playlist...")
         sc.populateNewPlaylist_ABR()
-        print("Generation Complete")
+        print("'" + sc.getNewUserPlaylist().getName() + "' has successfully been generated!")
         pass
 
     #except:

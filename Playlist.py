@@ -10,6 +10,9 @@ class Playlist:
         self.playlist_id = playlist_id
         self.songs = []
 
+    def getName(self):
+        return self.name
+
     def getSongs(self):
         return self.songs
 
@@ -36,7 +39,6 @@ class Playlist:
             playlist_Song = Song(self.client_secret, i['track']['name'], i['track']['id'], i['track']['uri'], artistName, artist_ID)
             playlist_Song.generateAudioAnalysis()
             self.songs.append(playlist_Song)
-
         #print(len(self.songs))
 
 
