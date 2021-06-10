@@ -46,25 +46,6 @@ class SpotifyClient:
                     return True
         return False
 
-    def searchPlaylist(self, userInput):
-        url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
-        response = requests.get(
-            url,
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.client_secret}"
-            }
-        )
-        time.sleep(0.5)
-        response_json = response.json()
-        userInput = userInput.lower()
-        for i in response_json['items']:
-            if (i['name'].lower() == userInput):
-                playlist = Playlist(self.client_secret, i['name'], i['id'])
-                playlist.generateSongs()
-                return playlist
-        return None
-
     def generateNewPlaylist(self, newPlaylistName):
         url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
         response = requests.post(
