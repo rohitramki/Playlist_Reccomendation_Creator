@@ -64,16 +64,12 @@ class SpotifyClient:
     # SBR = Spotify Based Recommending
     def populateNewPlaylist_SBR(self):
         playlist_ID = []
+        newPlaylist_ID = []
         playlist_URIs = ""
         for i in self.userPlaylist.getSongs():
             playlist_ID.append(i.getSongID())
-            print(i)
-        print()
-        print()
         for i in playlist_ID:
-            url = f"https://api.spotify.com/v1/recommendations?seed_tracks={i}"
-            print(url)
-            print()
+            url = f"https://api.spotify.com/v1/recommendations?limit=100&seed_tracks={i}"
             response = requests.get(
                 url,
                 headers={
@@ -83,12 +79,10 @@ class SpotifyClient:
             )
             response_json = response.json()
             time.sleep(0.2)
-            print(response_json)
-            print()
             for j in response_json['tracks']:
-                playlist_URIs += (j['uri'] + ",")
-                break
-        #for i in tqdm(range(0, 100), total=,
+                if (j['uri'] not in playlist_ID) or (j['uri'] not in newPlaylist_ID):
+                    playlist_URIs += (j['uri'] + ",")
+                    break
         for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
             time.sleep(0.2)
         playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
