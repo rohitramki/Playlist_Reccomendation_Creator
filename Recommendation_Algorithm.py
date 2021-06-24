@@ -3,9 +3,8 @@ import requests
 import time
 from SpotifyClient import SpotifyClient
 
-client_id = "pjp1yehfstdvh1uu0ni3m9sak"
-client_secret = "BQAipnwjiBFxwNu1cukUBS7RCIxhFbQsmEL5Cd3wrvmf5a_2SsBCr7I4ICxph4RSexAugQXCcpRMPy3pp_4pLcmELNeQt4-1UkMWwHpa5DJeA_QJ8Nsq4MaXknoTHeKAYX4qkFEnPFsyR6UaD8Hizu_lt5bEW5DH72veVk9OSX24hVI67EubQUoVG7Si7x3V2eetpNNMsDUU_XwqjaKp5w5So5gjXTj2QaDMLjumI8gRjmWglg"
-playlist_id = "2muKAmURcXAGdYLZBoVz7p"
+from tqdm import tqdm
+client_secret = "BQBDAALoN7iccCT04fXKI9mvvWstieofFf6nPGEd6V7_2VMtAGjp-Yhf7JPd1NwUvT1C4JN04LB9L6gI1OXcBJiog3x1V3xGPdXUFxv_IfM5D31EZfaIKquGLOCBSwXQ27G0WPdsRFq8IKe7JvDLisOmbr_HcyVwFlKlIEbpepvOr89-LHoIql6OmMYeF-ieVEng37F-_cMYKEwbP2E2Jj2oBSfzKKTCaye3XYC8PGEnzirxZA"
 
 def main():
     #importlib.import_module("SpotifyClient")
