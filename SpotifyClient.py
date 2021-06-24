@@ -80,7 +80,8 @@ class SpotifyClient:
             response_json = response.json()
             time.sleep(0.2)
             for j in response_json['tracks']:
-                if (j['uri'] not in playlist_ID) or (j['uri'] not in newPlaylist_ID):
+                if (j['id'] not in playlist_ID) or (j['id'] not in newPlaylist_ID):
+                    newPlaylist_ID.append(j['id'])
                     playlist_URIs += (j['uri'] + ",")
                     break
         for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
