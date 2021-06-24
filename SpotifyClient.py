@@ -46,25 +46,6 @@ class SpotifyClient:
                     return True
         return False
 
-    def searchPlaylist(self, userInput):
-        url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
-        response = requests.get(
-            url,
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.client_secret}"
-            }
-        )
-        time.sleep(0.5)
-        response_json = response.json()
-        userInput = userInput.lower()
-        for i in response_json['items']:
-            if (i['name'].lower() == userInput):
-                playlist = Playlist(self.client_secret, i['name'], i['id'])
-                playlist.generateSongs()
-                return playlist
-        return None
-
     def generateNewPlaylist(self, newPlaylistName):
         url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
         response = requests.post(
@@ -83,16 +64,12 @@ class SpotifyClient:
     # SBR = Spotify Based Recommending
     def populateNewPlaylist_SBR(self):
         playlist_ID = []
+        newPlaylist_ID = []
         playlist_URIs = ""
         for i in self.userPlaylist.getSongs():
             playlist_ID.append(i.getSongID())
-            print(i)
-        print()
-        print()
         for i in playlist_ID:
-            url = f"https://api.spotify.com/v1/recommendations?seed_tracks={i}"
-            print(url)
-            print()
+            url = f"https://api.spotify.com/v1/recommendations?limit=100&seed_tracks={i}"
             response = requests.get(
                 url,
                 headers={
@@ -102,13 +79,11 @@ class SpotifyClient:
             )
             response_json = response.json()
             time.sleep(0.2)
-            print(response_json)
-            print()
             for j in response_json['tracks']:
-                playlist_URIs += (j['uri'] + ",")
-                break
-
-        #for i in tqdm(range(0, 100), total=,
+                if (j['id'] not in playlist_ID) or (j['id'] not in newPlaylist_ID):
+                    newPlaylist_ID.append(j['id'])
+                    playlist_URIs += (j['uri'] + ",")
+                    break
         for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
             time.sleep(0.2)
         playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
