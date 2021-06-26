@@ -84,12 +84,10 @@ class SpotifyClient:
     # SBR = Spotify Based Recommending
     def populateNewPlaylist_SBR(self):
         playlist_ID = []
+        newPlaylist_ID = []
         playlist_URIs = ""
         for i in self.userPlaylist.getSongs():
             playlist_ID.append(i.getSongID())
-            print(i)
-        print()
-        print()
         for i in playlist_ID:
             url = f"https://api.spotify.com/v1/recommendations?limit=100&seed_tracks={i}"
             response = requests.get(
@@ -102,9 +100,10 @@ class SpotifyClient:
             response_json = response.json()
             time.sleep(0.2)
             for j in response_json['tracks']:
-                playlist_URIs += (j['uri'] + ",")
-                break
-
+                if (j['id'] not in playlist_ID) or (j['id'] not in newPlaylist_ID):
+                    newPlaylist_ID.append(j['id'])
+                    playlist_URIs += (j['uri'] + ",")
+                    break
         playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
         url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
         response = requests.post(
@@ -121,9 +120,12 @@ class SpotifyClient:
     def populateNewPlaylist_ABR(self):
         artist_dict = {}
         order_dict = {}
-        playlist_URI = ""
+        playlist_ID = []
+        newPlaylist_ID = []
+        playlist_URIs = ""
         iteration_counter = 1
         for i in self.userPlaylist.getSongs():
+            playlist_ID.append(i.getSongID())
             if (i.getArtistID() in artist_dict.keys()):
                 artist_dict[i.getArtistID()].append(i)
             else:
@@ -222,8 +224,10 @@ class SpotifyClient:
                         seed_tracks += str(k) + ","
                     seed_tracks = seed_tracks[:len(seed_tracks) - 1]
 
-
-                    url = f"https://api.spotify.com/v1/recommendations?limit=100&seed_tracks={seed_tracks}&"
+                    url = f"https://api.spotify.com/v1/recommendations?limit=100&seed_tracks={seed_tracks}&" \
+                          f"target_acousticness={j.getAcousticness()}&target_danceability={j.getDanceability()}" \
+                          f"&target_energy={j.getEnergy()}&target_instrumentalness={j.getInstrumentalness()}" \
+                          f"&target_liveness={j.getLiveness}&target_speechiness={j.getSpeechiness()}&target_valence={j.getValence}"
                     response = requests.get(
                         url,
                         headers={
@@ -233,13 +237,25 @@ class SpotifyClient:
                     )
                     response_json = response.json()
                     time.sleep(0.2)
-                    for j in response_json['tracks']:
-                        playlist_URIs += (j['uri'] + ",")
-                        break
-
-
+                    for k in response_json['tracks']:
+                        if (k['id'] not in playlist_ID) or (k['id'] not in newPlaylist_ID):
+                            newPlaylist_ID.append(k['id'])
+                            playlist_URIs += (k['uri'] + ",")
+                            break
 
             iteration_counter += 1
+
+        playlist_URIs = playlist_URIs[:len(playlist_URIs) - 1]
+        url = f"https://api.spotify.com/v1/playlists/{self.userNewPlaylist.getPlaylist_ID()}/tracks?uris={playlist_URIs}"
+        response = requests.post(
+            url,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.client_secret}"
+            }
+        )
+        for i in tqdm(range(0, len(self.userPlaylist.getSongs())), desc="Generating Playlist"):
+            time.sleep(0.2)
             # acousticness = Song_Audio_Features("acousticness")
             # danceability = Song_Audio_Features("danceability")
             # energy = Song_Audio_Features("energy")
