@@ -106,13 +106,14 @@ class SpotifyClient:
         nonduplicate_artists = []
 
         for i in self.userPlaylist.getSongs():
+            playlist_ID.append(i.getSongID())
             if (i.getArtistID() in nonduplicate_artists) and (i.getArtistID() not in duplicate_artists):
                 duplicate_artists.append(i.getArtistID())
             elif (i.getArtistID not in duplicate_artists):
                 nonduplicate_artists.append(i.getArtistID())
 
+
         for j in self.userPlaylist.getSongs():
-            playlist_ID.append(j.getSongID())
             #STSRC = Song to Song Relationship Container
             currentSong = STSRC(str(j.getSongID()))
             acousticness = {}
@@ -233,7 +234,7 @@ class SpotifyClient:
             time.sleep(0.2)
 
             for k in response_json['tracks']:
-                if (k['id'] not in playlist_ID) or (k['id'] not in newPlaylist_ID):
+                if (k['id'] not in playlist_ID) and (k['id'] not in newPlaylist_ID):
                     newPlaylist_ID.append(k['id'])
                     playlist_URIs += (k['uri'] + ",")
                     break
