@@ -4,7 +4,7 @@ import time
 from SpotifyClient import SpotifyClient
 
 from tqdm import tqdm
-client_secret = "BQC0Tov0hpx4b8vvGHnX5DsiTK3HOtB2Fvugz_-AkkmULIUUfN7GkDvmN6FsqnKE6_gsBHLfkdgdqWAgLhel-r6Q8NSYH-q1e6-c1p_0ix_qz64ik04lpGPwbbYh8nr8q_Vs8gyY2JZKzUORvrIg7VsrRHY4BGOn9KQaQbVuw-0yZZFgAqf6HeDjXYuHsl0wvh0p4Wp5ScqhbAQ5c5Y6qMa6NJr-4_FzjHqjTpV_7L_qMI9Eaw"
+client_secret = "BQB_-Ohh_3jMI2idSDBkkjWTc_7p5dU6MS0VWOrBy978QZ8-6dhKLajjh7vSLICqunu9BGVAXXtk8XZNbqUaxGEXnnX_q620P5NQ26HwHTjFGB5JVvs_G2Q3q8swmagn9xtDovJJVp0_IySJR55eqQ50H_xKck9kVpHlopqZ5OpvkvTJWl_3mfXf-65Z3oPzGRgTslsyCJ8KEHA4lM0nU1E8BtVdaki6p5PDrvv1Mm5p2259ysOd"
 
 def main():
     #importlib.import_module("SpotifyClient")

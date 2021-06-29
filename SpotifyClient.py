@@ -18,7 +18,7 @@ class SpotifyClient:
     def getUserName(self):
         return self.name
 
-    def getUserPlayList(self):
+    def getUserPlaylist(self):
         return self.userPlaylist
 
     def getNewUserPlaylist(self):
